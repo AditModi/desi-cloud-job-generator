@@ -42,61 +42,68 @@ A fun, interactive web application that generates quirky, futuristic cloud job t
 
 ### AWS Deployment
 
-#### Option 1: AWS App Runner (Recommended)
+#### Option 1: AWS Amplify (Recommended for Static Sites)
 
-1. **From Source Code (GitHub)**:
+**Method 1: GitHub Integration (Easiest)**
+1. **Push to GitHub**:
    ```bash
-   # Push your code to GitHub first
    git add .
-   git commit -m "Add App Runner support"
+   git commit -m "Add Amplify deployment configuration"
    git push origin main
    ```
 
-2. **Deploy via AWS Console**:
-   - Go to AWS App Runner console
-   - Create new service
-   - Choose "Source code repository"
+2. **Deploy via Amplify Console**:
+   - Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify/)
+   - Click "New app" → "Host web app"
    - Connect your GitHub repository
-   - App Runner will automatically detect the `apprunner.yaml` configuration
+   - Amplify will automatically detect the `amplify.yml` configuration
    - Deploy!
 
-3. **Deploy via AWS CLI**:
+**Method 2: Amplify CLI**
+1. **Install Amplify CLI**:
    ```bash
-   # Create App Runner service
-   aws apprunner create-service \
-     --service-name desi-cloud-jobs \
-     --source-configuration '{
-       "ImageRepository": {
-         "ImageIdentifier": "your-account.dkr.ecr.region.amazonaws.com/desi-cloud-jobs:latest",
-         "ImageConfiguration": {
-           "Port": "8080"
-         },
-         "ImageRepositoryType": "ECR"
-       },
-       "AutoDeploymentsEnabled": true
-     }'
+   npm install -g @aws-amplify/cli
+   amplify configure
    ```
+
+2. **Initialize and Deploy**:
+   ```bash
+   amplify init
+   amplify add hosting
+   amplify publish
+   ```
+
+**Method 3: Manual Upload**
+1. **Zip your files**:
+   ```bash
+   zip -r desi-cloud-jobs.zip . -x "*.git*" "*.md" "amplify.yml"
+   ```
+
+2. **Upload via Amplify Console** → Manual deploy
 
 #### Option 2: Static Website (S3 + CloudFront)
 
 1. **Upload to S3**:
    ```bash
-   aws s3 sync . s3://your-bucket-name --exclude "*.md" --exclude "aws-integration.js" --exclude "server.js" --exclude "apprunner.yaml" --exclude "Dockerfile"
+   aws s3 sync . s3://your-bucket-name --exclude "*.md" --exclude "amplify.yml" --exclude ".git*"
    ```
 
 2. **Enable static website hosting** in S3 console
 
 3. **Set up CloudFront distribution** for global CDN
 
-#### Option 3: Full Serverless (Lambda + API Gateway)
+#### Features Included:
+- ✅ **Global CDN** (CloudFront) for fast loading
+- ✅ **HTTPS** by default
+- ✅ **Custom domain** support
+- ✅ **Automatic deployments** from GitHub
+- ✅ **Branch deployments** (dev, staging, prod)
+- ✅ **Security headers** configured
+- ✅ **SPA routing** support
 
-1. **Deploy using SAM**:
-   ```bash
-   sam build
-   sam deploy --guided
-   ```
-
-2. **Update frontend** to use API Gateway endpoint
+#### Cost Estimate:
+- **Amplify Free Tier**: 1000 build minutes/month, 15GB served/month
+- **Typical monthly cost**: $0-5 for personal projects
 
 ## 📁 Project Structure
 
