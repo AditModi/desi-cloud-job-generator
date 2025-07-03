@@ -1,0 +1,45 @@
+{
+  "name": "desi-cloud-job-generator",
+  "version": "1.0.0",
+  "description": "A fun web app that generates quirky, futuristic cloud job titles with a desi twist",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build process needed for static site'",
+    "deploy": "aws s3 sync . s3://your-bucket-name --exclude '*.md' --exclude 'package.json' --exclude 'node_modules/*'",
+    "lint": "eslint script.js aws-integration.js server.js",
+    "format": "prettier --write *.js *.html *.css"
+  },
+  "keywords": [
+    "cloud-computing",
+    "job-titles",
+    "indian-tech",
+    "desi",
+    "aws",
+    "career",
+    "fun",
+    "generator"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/desi-cloud-job-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/desi-cloud-job-generator/issues"
+  },
+  "homepage": "https://yourusername.github.io/desi-cloud-job-generator",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
