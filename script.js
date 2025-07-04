@@ -124,6 +124,46 @@ const descriptionTemplates = {
         'polishes code like polishing brass during Diwali',
         'perfects solutions with the dedication of a classical musician',
         'fine-tunes systems like tuning a harmonium'
+    ],
+    'Frugal innovator': [
+        'stretches resources like a middle-class mom stretches monthly budget',
+        'optimizes cloud costs better than a Gujarati businessman negotiates deals',
+        'finds value in every byte like a thrifty shopper at Sarojini market'
+    ],
+    'Deadline crusher': [
+        'meets deadlines with the punctuality of the Rajdhani Express',
+        'delivers projects faster than Swiggy delivers biryani on a rainy day',
+        'never misses a timeline even during the chaos of wedding season'
+    ],
+    'Mentor': [
+        'guides juniors with the patience of a school teacher during exam season',
+        'shares knowledge more generously than an aunty shares food at gatherings',
+        'builds up team skills like a cricket coach preparing for the World Cup'
+    ],
+    'Calm under pressure': [
+        'stays composed during outages like a Mumbai local commuter during monsoon',
+        'handles production issues with the calmness of a yoga instructor',
+        'maintains peace in chaos like a traffic cop at a busy Delhi intersection'
+    ],
+    'Detail-oriented': [
+        'catches bugs smaller than the print on a movie ticket disclaimer',
+        'notices details that even the neighborhood aunty would miss',
+        'reviews code more thoroughly than parents checking exam results'
+    ],
+    'Relationship builder': [
+        'connects with stakeholders better than a pan-India mobile network',
+        'builds rapport faster than making friends at a shaadi buffet',
+        'maintains relationships like keeping plants alive during peak summer'
+    ],
+    'Continuous learner': [
+        'absorbs new technologies faster than a samosa absorbs chutney',
+        'updates skills more regularly than people update their Instagram stories',
+        'learns frameworks quicker than kids learn TikTok dances'
+    ],
+    'Minimalist': [
+        'writes clean code like Marie Kondo organizing a tiny Mumbai apartment',
+        'creates elegant solutions with fewer resources than a street food vendor',
+        'optimizes architecture like fitting an entire joint family in a 2BHK'
     ]
 };
 
@@ -139,7 +179,22 @@ const superpowerDescriptions = {
     'Never forgets to backup': 'Data loss is just a myth in their presence!',
     'Can work through any Bollywood song': 'Productivity increases with every beat drop!',
     'Always has the right cable': 'The human equivalent of a Swiss Army knife for tech problems!',
-    'Can make friends with any API': 'APIs actually enjoy working with them!'
+    'Can make friends with any API': 'APIs actually enjoy working with them!',
+    'Finds parking spots in Bangalore': 'A truly supernatural ability that defies all logic!',
+    'Can predict when the manager will call': 'Has a sixth sense that alerts them seconds before the phone rings!',
+    'Remembers all passwords without a manager': 'Their brain has better encryption than most security systems!',
+    'Can understand client requirements on first call': 'A rare superpower that saves weeks of development time!',
+    'Knows every shortcut in VS Code': 'Their fingers move faster than the eye can see!',
+    'Can fix bugs by just staring at the code': 'The code corrects itself out of respect!',
+    'Survives on just one meal during deadlines': 'Their focus is stronger than their hunger!',
+    'Can attend meetings with camera off while cooking': 'Multitasking that would impress even Indian moms!',
+    'Convinces clients to extend deadlines': 'Has negotiation skills that would put Chanakya to shame!',
+    'Predicts server crashes before monitoring alerts': 'Their intuition is faster than CloudWatch!',
+    'Can work with stable internet on Indian trains': 'Defies the laws of physics and IRCTC!',
+    'Finds the cheapest cloud architecture': 'Can optimize costs better than a joint family plans a vacation!',
+    'Remembers entire codebase structure': 'Their mental map is more detailed than Google Maps!',
+    'Can explain tech to non-tech relatives': 'Even uncle ji now understands what cloud computing is!',
+    'Writes documentation people actually read': 'The rarest superpower of them all!'
 };
 
 // Form handling
@@ -154,14 +209,137 @@ document.getElementById('jobTitleForm').addEventListener('submit', async functio
         superpower: formData.get('superpower')
     };
     
+    // Check if AI generation is requested
+    const useAI = document.getElementById('useAI').checked;
+    
     showLoading();
     
-    // Simulate API call delay for better UX
+    if (useAI) {
+        try {
+            // Check if we're using the browser version or Node.js version
+            if (typeof window !== 'undefined' && window.bedrockEnabled) {
+                // Browser version - call the API endpoint
+                const result = await callBedrockAPI(userData);
+                showResult(result);
+            } else if (typeof generateJobTitleWithBedrock === 'function') {
+                // Node.js version - direct call to Bedrock
+                console.log('Using AWS Bedrock for job title generation');
+                const result = await generateJobTitleWithBedrock(userData);
+                showResult(result);
+            } else {
+                console.log('AWS Bedrock not available, falling back to template-based generation');
+                fallbackToTemplateGeneration(userData);
+            }
+        } catch (error) {
+            console.error('Error generating job title with Bedrock:', error);
+            console.log('Falling back to template-based generation');
+            fallbackToTemplateGeneration(userData);
+        }
+    } else {
+        // Use template-based generation
+        console.log('Using template-based generation');
+        fallbackToTemplateGeneration(userData);
+    }
+});
+
+// Helper function for template-based generation with delay
+function fallbackToTemplateGeneration(userData) {
     setTimeout(() => {
         const result = generateJobTitle(userData);
         showResult(result);
-    }, 2000);
-});
+    }, 1000);
+}
+
+// Function to call Bedrock API via Lambda (for browser environment)
+async function callBedrockAPI(userData) {
+    try {
+        // Check if we're using mock responses
+        if (window.useMockResponses) {
+            console.log('Using mock responses for Bedrock API');
+            return mockBedrockResponse(userData);
+        }
+        
+        // Get the API endpoint from the config
+        const apiEndpoint = window.apiEndpoint || '/api/generate';
+        
+        // Call the API
+        const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error calling Bedrock API:', error);
+        throw error;
+    }
+}
+
+// Generate a mock response for browser testing
+function mockBedrockResponse(userData) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // Create more personalized mock responses based on user inputs
+            let jobTitle;
+            
+            switch(userData.cloudService) {
+                case 'Serverless':
+                    jobTitle = 'Function Fusion Maharaja';
+                    break;
+                case 'AI/ML':
+                    jobTitle = 'Neural Nawaab';
+                    break;
+                case 'Security':
+                    jobTitle = 'Digital Darwaan 3000';
+                    break;
+                case 'Databases':
+                    jobTitle = 'Query Qutub Minar';
+                    break;
+                case 'IoT':
+                    jobTitle = 'Sensor Samrat';
+                    break;
+                case 'DevOps':
+                    jobTitle = 'Pipeline Pandit';
+                    break;
+                case 'Networking':
+                    jobTitle = 'Bandwidth Baadshah';
+                    break;
+                case 'Storage':
+                    jobTitle = 'S3 Samosa Specialist';
+                    break;
+                case 'Analytics':
+                    jobTitle = 'Data Dhaba Owner';
+                    break;
+                case 'Containers':
+                    jobTitle = 'Kubernetes Kulfi King';
+                    break;
+                case 'Microservices':
+                    jobTitle = 'API Autowallah';
+                    break;
+                case 'Edge Computing':
+                    jobTitle = 'Edge Ek Number';
+                    break;
+                default:
+                    jobTitle = 'Cloud Computing Rockstar';
+            }
+            
+            const description = `${userData.name} is the ${jobTitle} who combines ${userData.workStyle.toLowerCase()} with ${userData.superpower.toLowerCase()} to create tech magic. Their approach to cloud computing is as unique as finding a quiet corner in a Delhi market!`;
+            
+            resolve({
+                title: jobTitle,
+                description: description,
+                userName: userData.name
+            });
+        }, 1500);
+    });
+}
 
 function generateJobTitle(userData) {
     // Get random job title for the selected cloud service

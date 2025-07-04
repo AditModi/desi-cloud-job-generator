@@ -54,6 +54,15 @@
                         <option value="Documentation guru">Documentation Guru</option>
                         <option value="Multitasker">Multitasker</option>
                         <option value="Perfectionist">Perfectionist</option>
+                        <option value="Frugal innovator">Frugal Innovator</option>
+                        <option value="Deadline crusher">Deadline Crusher</option>
+                        <option value="Mentor">Mentor</option>
+                        <option value="Calm under pressure">Calm Under Pressure</option>
+                        <option value="Detail-oriented">Detail-Oriented</option>
+                        <option value="Relationship builder">Relationship Builder</option>
+                        <option value="Continuous learner">Continuous Learner</option>
+                        <option value="Minimalist">Minimalist</option>
+                        <option value="Perfectionist">Perfectionist</option>
                     </select>
                 </div>
 
@@ -73,7 +82,39 @@
                         <option value="Can work through any Bollywood song">Can work through any Bollywood song</option>
                         <option value="Always has the right cable">Always has the right cable</option>
                         <option value="Can make friends with any API">Can make friends with any API</option>
+                        <option value="Finds parking spots in Bangalore">Finds parking spots in Bangalore</option>
+                        <option value="Can predict when the manager will call">Can predict when the manager will call</option>
+                        <option value="Remembers all passwords without a manager">Remembers all passwords without a manager</option>
+                        <option value="Can understand client requirements on first call">Can understand client requirements on first call</option>
+                        <option value="Knows every shortcut in VS Code">Knows every shortcut in VS Code</option>
+                        <option value="Can fix bugs by just staring at the code">Can fix bugs by just staring at the code</option>
+                        <option value="Survives on just one meal during deadlines">Survives on just one meal during deadlines</option>
+                        <option value="Can attend meetings with camera off while cooking">Can attend meetings with camera off while cooking</option>
+                        <option value="Convinces clients to extend deadlines">Convinces clients to extend deadlines</option>
+                        <option value="Predicts server crashes before monitoring alerts">Predicts server crashes before monitoring alerts</option>
+                        <option value="Can work with stable internet on Indian trains">Can work with stable internet on Indian trains</option>
+                        <option value="Finds the cheapest cloud architecture">Finds the cheapest cloud architecture</option>
+                        <option value="Remembers entire codebase structure">Remembers entire codebase structure</option>
+                        <option value="Can explain tech to non-tech relatives">Can explain tech to non-tech relatives</option>
+                        <option value="Writes documentation people actually read">Writes documentation people actually read</option>
+                        <option value="Meme-master">Meme Master</option>
+                        <option value="Always finds the best snacks">Always finds the best snacks</option>
+                        <option value="Can debug anything at 3 AM">Can debug anything at 3 AM</option>
+                        <option value="Makes the best filter coffee">Makes the best filter coffee</option>
+                        <option value="Can explain complex tech in simple Hindi">Can explain complex tech in simple Hindi</option>
+                        <option value="Never forgets to backup">Never forgets to backup</option>
+                        <option value="Can work through any Bollywood song">Can work through any Bollywood song</option>
+                        <option value="Always has the right cable">Always has the right cable</option>
+                        <option value="Can make friends with any API">Can make friends with any API</option>
                     </select>
+                </div>
+
+                <div class="form-group ai-toggle">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="useAI" name="useAI">
+                        <span class="toggle-text">Use AI-powered generation (AWS Bedrock)</span>
+                        <span class="toggle-info" title="When enabled, uses AWS Bedrock AI to generate more creative and personalized job titles. Falls back to template-based generation if unavailable.">ℹ️</span>
+                    </label>
                 </div>
 
                 <button type="submit" class="generate-btn">
@@ -110,6 +151,8 @@
         </footer>
     </div>
 
+    <script src="browser-config.js"></script>
     <script src="script.js"></script>
+    <script src="aws-integration.js"></script>
 </body>
 </html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Desi Cloud Job Title Generator - Simple Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #6a5acd;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #6a5acd;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #5a4abf;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            display: none;
+        }
+        .job-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6a5acd;
+            margin-bottom: 10px;
+        }
+        .job-description {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .user-name {
+            text-align: right;
+            font-weight: bold;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6a5acd;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Desi Cloud Job Title Generator</h1>
+    <div class="container">
+        <div class="form-group">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" placeholder="Enter your name">
+        </div>
+        
+        <div class="form-group">
+            <label for="cloudService">Favorite Cloud Service:</label>
+            <select id="cloudService">
+                <option value="">Select a cloud service</option>
+                <option value="Serverless">Serverless</option>
+                <option value="AI/ML">AI/ML</option>
+                <option value="Security">Security</option>
+                <option value="Databases">Databases</option>
+                <option value="IoT">IoT</option>
+                <option value="Networking">Networking</option>
+                <option value="DevOps">DevOps</option>
+                <option value="Storage">Storage</option>
+                <option value="Analytics">Analytics</option>
+                <option value="Containers">Containers</option>
+                <option value="Microservices">Microservices</option>
+                <option value="Edge Computing">Edge Computing</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="workStyle">Preferred Work Style:</label>
+            <select id="workStyle">
+                <option value="">Select a work style</option>
+                <option value="Jugaadu">Jugaadu (Creative Problem Solver)</option>
+                <option value="Team player">Team Player</option>
+                <option value="WFH expert">WFH Expert</option>
+                <option value="Night owl">Night Owl</option>
+                <option value="Code-ninja">Code Ninja</option>
+                <option value="Early bird">Early Bird</option>
+                <option value="Meeting master">Meeting Master</option>
+                <option value="Documentation guru">Documentation Guru</option>
+                <option value="Multitasker">Multitasker</option>
+                <option value="Perfectionist">Perfectionist</option>
+                <option value="Frugal innovator">Frugal Innovator</option>
+                <option value="Deadline crusher">Deadline Crusher</option>
+                <option value="Mentor">Mentor</option>
+                <option value="Calm under pressure">Calm Under Pressure</option>
+                <option value="Detail-oriented">Detail-Oriented</option>
+                <option value="Relationship builder">Relationship Builder</option>
+                <option value="Continuous learner">Continuous Learner</option>
+                <option value="Minimalist">Minimalist</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="superpower">Secret Superpower:</label>
+            <select id="superpower">
+                <option value="">Select a superpower</option>
+                <option value="Can fix WiFi with jugaad">Can fix WiFi with jugaad</option>
+                <option value="Never misses chai break">Never misses chai break</option>
+                <option value="Can code during power cuts">Can code during power cuts</option>
+                <option value="Meme-master">Meme Master</option>
+                <option value="Always finds the best snacks">Always finds the best snacks</option>
+                <option value="Can debug anything at 3 AM">Can debug anything at 3 AM</option>
+                <option value="Makes the best filter coffee">Makes the best filter coffee</option>
+                <option value="Can explain complex tech in simple Hindi">Can explain complex tech in simple Hindi</option>
+                <option value="Never forgets to backup">Never forgets to backup</option>
+                <option value="Can work through any Bollywood song">Can work through any Bollywood song</option>
+                <option value="Always has the right cable">Always has the right cable</option>
+                <option value="Can make friends with any API">Can make friends with any API</option>
+                <option value="Finds parking spots in Bangalore">Finds parking spots in Bangalore</option>
+                <option value="Can predict when the manager will call">Can predict when the manager will call</option>
+                <option value="Remembers all passwords without a manager">Remembers all passwords without a manager</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="useAI"> Use AI-powered generation
+            </label>
+        </div>
+        
+        <button id="generateBtn">Generate Job Title</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your awesome job title...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="job-title" id="jobTitle"></div>
+            <div class="job-description" id="jobDescription"></div>
+            <div class="user-name" id="userName"></div>
+            <div style="margin-top: 20px;">
+                <button id="generateAgainBtn">Generate Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Job title templates
+        const jobTitleTemplates = {
+            'Serverless': [
+                'Lambda Lassi Master',
+                'Function Falooda Specialist',
+                'Serverless Samosa Chef',
+                'Event-Driven Dosa Expert'
+            ],
+            'AI/ML': [
+                'Algorithm Aloo Tikki',
+                'Neural Network Naan Baker',
+                'Machine Learning Masala Mixer',
+                'Data Science Dhokla Maker'
+            ],
+            'Security': [
+                'Cyber Security Chowkidar',
+                'Firewall Pani Puri Vendor',
+                'Encryption Idli Specialist',
+                'Zero Trust Zomato Delivery'
+            ],
+            'Databases': [
+                'Data Dabbawala',
+                'Query Quesadilla Master',
+                'NoSQL Noodle Expert',
+                'Schema Sambar Specialist'
+            ],
+            'IoT': [
+                'IoT Imli Connector',
+                'Sensor Sev Puri Master',
+                'Edge Computing Egg Roll',
+                'Device Dhaba Manager'
+            ],
+            'Networking': [
+                'Network Nimbu Paani Mixer',
+                'Load Balancer Laddu Maker',
+                'CDN Chai Distributor',
+                'Bandwidth Bhel Puri Expert'
+            ],
+            'DevOps': [
+                'CI/CD Chole Bhature',
+                'Pipeline Pakoda Fryer',
+                'Container Kulfi Maker',
+                'Deployment Dahi Vada'
+            ],
+            'Storage': [
+                'Cloud Storage Chutney Keeper',
+                'Backup Biryani Specialist',
+                'Archive Achar Manager',
+                'Data Lake Dal Expert'
+            ],
+            'Analytics': [
+                'Big Data Bhajiya Analyst',
+                'Metrics Momo Counter',
+                'Dashboard Dosa Designer',
+                'Insights Idiyappam Expert'
+            ],
+            'Containers': [
+                'Docker Dabeli Master',
+                'Kubernetes Kachori King',
+                'Pod Pav Bhaji Specialist',
+                'Orchestration Uttapam Expert'
+            ],
+            'Microservices': [
+                'Service Mesh Samosa Architect',
+                'API Gateway Aloo Paratha',
+                'Microservice Misal Pav Master',
+                'Distributed Dhokla Designer'
+            ],
+            'Edge Computing': [
+                'Edge Ennai Kathirikai Expert',
+                'Latency Lemon Rice Reducer',
+                'Regional Rasam Router',
+                'Proximity Poha Processor'
+            ]
+        };
+
+        // Description templates
+        const descriptionTemplates = {
+            'Jugaadu': [
+                'finds creative solutions faster than finding parking in Bangalore',
+                'can fix any cloud issue with the same spirit as fixing a broken rickshaw',
+                'turns complex problems into simple solutions like making perfect chai'
+            ],
+            'Team player': [
+                'brings teams together like a good Bollywood movie brings families',
+                'collaborates better than street vendors sharing space',
+                'makes teamwork as smooth as butter chicken'
+            ],
+            'WFH expert': [
+                'masters remote work like a pro gamer masters PUBG',
+                'runs virtual meetings smoother than Mumbai local trains',
+                'balances work-life like balancing spices in dal'
+            ],
+            'Night owl': [
+                'codes through the night like a dedicated street food vendor',
+                'debugs at 3 AM with the energy of a Bollywood dance number',
+                'burns the midnight oil like Diwali celebrations'
+            ],
+            'Code-ninja': [
+                'writes code faster than making instant Maggi',
+                'debugs with the precision of a cricket commentator',
+                'deploys solutions quicker than ordering food on Swiggy'
+            ],
+            'Early bird': [
+                'starts coding before the chai wallah opens shop',
+                'catches bugs earlier than morning newspaper delivery',
+                'begins work with the enthusiasm of first day of IPL'
+            ],
+            'Meeting master': [
+                'runs meetings smoother than a well-oiled auto rickshaw',
+                'facilitates discussions like a seasoned cricket captain',
+                'keeps everyone engaged like a good Bollywood plot twist'
+            ],
+            'Documentation guru': [
+                'documents code better than family WhatsApp group admins',
+                'writes guides clearer than Google Maps directions',
+                'maintains records like a dedicated CA during tax season'
+            ],
+            'Multitasker': [
+                'juggles tasks like a street performer juggling fire',
+                'handles multiple projects like managing joint family dynamics',
+                'switches contexts faster than changing TV channels during ads'
+            ],
+            'Perfectionist': [
+                'polishes code like polishing brass during Diwali',
+                'perfects solutions with the dedication of a classical musician',
+                'fine-tunes systems like tuning a harmonium'
+            ],
+            'Frugal innovator': [
+                'stretches resources like a middle-class mom stretches monthly budget',
+                'optimizes cloud costs better than a Gujarati businessman negotiates deals',
+                'finds value in every byte like a thrifty shopper at Sarojini market'
+            ],
+            'Deadline crusher': [
+                'meets deadlines with the punctuality of the Rajdhani Express',
+                'delivers projects faster than Swiggy delivers biryani on a rainy day',
+                'never misses a timeline even during the chaos of wedding season'
+            ],
+            'Mentor': [
+                'guides juniors with the patience of a school teacher during exam season',
+                'shares knowledge more generously than an aunty shares food at gatherings',
+                'builds up team skills like a cricket coach preparing for the World Cup'
+            ],
+            'Calm under pressure': [
+                'stays composed during outages like a Mumbai local commuter during monsoon',
+                'handles production issues with the calmness of a yoga instructor',
+                'maintains peace in chaos like a traffic cop at a busy Delhi intersection'
+            ],
+            'Detail-oriented': [
+                'catches bugs smaller than the print on a movie ticket disclaimer',
+                'notices details that even the neighborhood aunty would miss',
+                'reviews code more thoroughly than parents checking exam results'
+            ],
+            'Relationship builder': [
+                'connects with stakeholders better than a pan-India mobile network',
+                'builds rapport faster than making friends at a shaadi buffet',
+                'maintains relationships like keeping plants alive during peak summer'
+            ],
+            'Continuous learner': [
+                'absorbs new technologies faster than a samosa absorbs chutney',
+                'updates skills more regularly than people update their Instagram stories',
+                'learns frameworks quicker than kids learn TikTok dances'
+            ],
+            'Minimalist': [
+                'writes clean code like Marie Kondo organizing a tiny Mumbai apartment',
+                'creates elegant solutions with fewer resources than a street food vendor',
+                'optimizes architecture like fitting an entire joint family in a 2BHK'
+            ]
+        };
+
+        // Superpower descriptions
+        const superpowerDescriptions = {
+            'Can fix WiFi with jugaad': 'Even the routers respect their innovative troubleshooting skills!',
+            'Never misses chai break': 'Keeps the team caffeinated and motivated throughout the day!',
+            'Can code during power cuts': 'Nothing stops their coding flow, not even load shedding!',
+            'Meme-master': 'Lightens up Slack channels and makes standups actually fun!',
+            'Always finds the best snacks': 'The office snack game is always on point with them around!',
+            'Can debug anything at 3 AM': 'Production issues fear their late-night debugging superpowers!',
+            'Makes the best filter coffee': 'Fuels the entire dev team with perfect South Indian coffee!',
+            'Can explain complex tech in simple Hindi': 'Makes cloud computing as easy to understand as Bollywood plots!',
+            'Never forgets to backup': 'Data loss is just a myth in their presence!',
+            'Can work through any Bollywood song': 'Productivity increases with every beat drop!',
+            'Always has the right cable': 'The human equivalent of a Swiss Army knife for tech problems!',
+            'Can make friends with any API': 'APIs actually enjoy working with them!',
+            'Finds parking spots in Bangalore': 'A truly supernatural ability that defies all logic!',
+            'Can predict when the manager will call': 'Has a sixth sense that alerts them seconds before the phone rings!',
+            'Remembers all passwords without a manager': 'Their brain has better encryption than most security systems!'
+        };
+
+        // Generate job title using templates
+        function generateJobTitle(userData) {
+            // Get random job title for the selected cloud service
+            const titles = jobTitleTemplates[userData.cloudService] || ['Cloud Computing Specialist'];
+            const jobTitle = titles[Math.floor(Math.random() * titles.length)];
+            
+            // Get description template for work style
+            const descriptions = descriptionTemplates[userData.workStyle] || ['works with dedication and skill'];
+            const workStyleDesc = descriptions[Math.floor(Math.random() * descriptions.length)];
+            
+            // Get superpower description
+            const superpowerDesc = superpowerDescriptions[userData.superpower] || 'Has amazing technical skills!';
+            
+            // Create full description
+            const fullDescription = `${userData.name} is the ${jobTitle} who ${workStyleDesc}. ${superpowerDesc}`;
+            
+            return {
+                title: jobTitle,
+                description: fullDescription,
+                userName: userData.name
+            };
+        }
+
+        // Generate job title using mock AI
+        function mockAIGeneration(userData) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    // Create more personalized mock responses based on user inputs
+                    let jobTitle;
+                    
+                    switch(userData.cloudService) {
+                        case 'Serverless':
+                            jobTitle = 'Function Fusion Maharaja';
+                            break;
+                        case 'AI/ML':
+                            jobTitle = 'Neural Nawaab';
+                            break;
+                        case 'Security':
+                            jobTitle = 'Digital Darwaan 3000';
+                            break;
+                        case 'Databases':
+                            jobTitle = 'Query Qutub Minar';
+                            break;
+                        case 'IoT':
+                            jobTitle = 'Sensor Samrat';
+                            break;
+                        case 'DevOps':
+                            jobTitle = 'Pipeline Pandit';
+                            break;
+                        case 'Networking':
+                            jobTitle = 'Bandwidth Baadshah';
+                            break;
+                        case 'Storage':
+                            jobTitle = 'S3 Samosa Specialist';
+                            break;
+                        case 'Analytics':
+                            jobTitle = 'Data Dhaba Owner';
+                            break;
+                        case 'Containers':
+                            jobTitle = 'Kubernetes Kulfi King';
+                            break;
+                        case 'Microservices':
+                            jobTitle = 'API Autowallah';
+                            break;
+                        case 'Edge Computing':
+                            jobTitle = 'Edge Ek Number';
+                            break;
+                        default:
+                            jobTitle = 'Cloud Computing Rockstar';
+                    }
+                    
+                    const description = `${userData.name} is the ${jobTitle} who combines ${userData.workStyle.toLowerCase()} with ${userData.superpower.toLowerCase()} to create tech magic. Their approach to cloud computing is as unique as finding a quiet corner in a Delhi market!`;
+                    
+                    resolve({
+                        title: jobTitle,
+                        description: description,
+                        userName: userData.name
+                    });
+                }, 1500);
+            });
+        }
+
+        // Show result
+        function showResult(result) {
+            document.getElementById('jobTitle').textContent = result.title;
+            document.getElementById('jobDescription').textContent = result.description;
+            document.getElementById('userName').textContent = `- ${result.userName}`;
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+        }
+
+        // Validate form
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const cloudService = document.getElementById('cloudService').value;
+            const workStyle = document.getElementById('workStyle').value;
+            const superpower = document.getElementById('superpower').value;
+            
+            if (!name) {
+                alert('Please enter your name');
+                return false;
+            }
+            
+            if (!cloudService) {
+                alert('Please select a cloud service');
+                return false;
+            }
+            
+            if (!workStyle) {
+                alert('Please select a work style');
+                return false;
+            }
+            
+            if (!superpower) {
+                alert('Please select a superpower');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Handle generate button click
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            if (!validateForm()) {
+                return;
+            }
+            
+            // Get user data
+            const userData = {
+                name: document.getElementById('name').value,
+                cloudService: document.getElementById('cloudService').value,
+                workStyle: document.getElementById('workStyle').value,
+                superpower: document.getElementById('superpower').value
+            };
+            
+            // Check if AI generation is requested
+            const useAI = document.getElementById('useAI').checked;
+            
+            // Show loading
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            
+            if (useAI) {
+                try {
+                    // Use mock AI generation
+                    const result = await mockAIGeneration(userData);
+                    showResult(result);
+                } catch (error) {
+                    console.error('Error generating job title with AI:', error);
+                    // Fallback to template-based generation
+                    const result = generateJobTitle(userData);
+                    showResult(result);
+                }
+            } else {
+                // Use template-based generation
+                setTimeout(() => {
+                    const result = generateJobTitle(userData);
+                    showResult(result);
+                }, 500);
+            }
+        });
+
+        // Handle generate again button click
+        document.getElementById('generateAgainBtn').addEventListener('click', function() {
+            document.getElementById('result').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

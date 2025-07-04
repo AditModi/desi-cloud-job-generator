@@ -1,20 +1,11 @@
 // AWS Integration for Desi Cloud Job Title Generator
 // This file contains functions to integrate with AWS Bedrock for AI-powered job title generation
 
-// AWS SDK Configuration
-// Note: In production, use proper authentication methods like IAM roles or AWS Cognito
-const AWS_CONFIG = {
-    region: 'us-east-1', // Change to your preferred region
-    // Add your AWS credentials configuration here
-    // For security, use environment variables or AWS IAM roles in production
-};
+// Import AWS SDK for Bedrock
+const { BedrockRuntimeClient, InvokeModelCommand } = require("@aws-sdk/client-bedrock-runtime");
 
-// Bedrock model configuration
-const BEDROCK_CONFIG = {
-    modelId: 'anthropic.claude-3-haiku-20240307-v1:0', // Using Claude 3 Haiku for cost-effectiveness
-    maxTokens: 500,
-    temperature: 0.8, // Higher temperature for more creative outputs
-};
+// Import configuration
+const { ENV, AWS_CONFIG } = require("./config");
 
 /**
  * Generate job title using AWS Bedrock
@@ -25,14 +16,13 @@ async function generateJobTitleWithBedrock(userData) {
     const prompt = createPrompt(userData);
     
     try {
-        // This would be the actual AWS Bedrock API call
-        // For now, we'll use a mock implementation
-        const response = await callBedrockAPI(prompt);
-        return parseBedrockResponse(response);
+        // Call AWS Bedrock API
+        const response = await callBedrockAPI(prompt, userData);
+        return parseBedrockResponse(response, userData.name);
     } catch (error) {
         console.error('Error calling Bedrock API:', error);
-        // Fallback to local generation
-        return generateJobTitle(userData);
+        // Throw the error to be handled by the caller
+        throw error;
     }
 }
 
@@ -62,28 +52,108 @@ Generate a creative and unique job title now:`;
 }
 
 /**
- * Mock AWS Bedrock API call
- * In production, replace this with actual AWS SDK calls
+ * Call AWS Bedrock API
  * @param {string} prompt - The prompt to send to the model
+ * @param {Object} userData - User input data for context
  * @returns {Promise<string>} Model response
  */
-async function callBedrockAPI(prompt) {
-    // Mock implementation - replace with actual AWS Bedrock call
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // This would be replaced with actual Bedrock API response
-            resolve(`Job Title: Cloud Computing Rockstar
-Description: ${prompt.includes('Databases') ? 'Data flows through their hands like perfect biryani rice' : 'Codes with the precision of a master chef'}.`);
-        }, 1500);
-    });
+async function callBedrockAPI(prompt, userData) {
+    // Check if we should use mock in development mode
+    if (ENV.NODE_ENV === 'development' && ENV.FEATURES.USE_MOCK_IN_DEV) {
+        console.log("Using mock response in development mode");
+        return mockBedrockResponse(userData);
+    }
+    
+    try {
+        // Create Bedrock client
+        const client = new BedrockRuntimeClient({ 
+            region: AWS_CONFIG.region 
+        });
+        
+        // Prepare the request payload for Claude 3 Haiku
+        const input = {
+            modelId: AWS_CONFIG.bedrock.modelId,
+            contentType: "application/json",
+            accept: "application/json",
+            body: JSON.stringify({
+                anthropic_version: "bedrock-2023-05-31",
+                max_tokens: AWS_CONFIG.bedrock.maxTokens,
+                temperature: AWS_CONFIG.bedrock.temperature,
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: prompt
+                            }
+                        ]
+                    }
+                ]
+            })
+        };
+        
+        // Send the request to Bedrock
+        const command = new InvokeModelCommand(input);
+        const response = await client.send(command);
+        
+        // Parse the response
+        const responseBody = JSON.parse(new TextDecoder().decode(response.body));
+        return responseBody.content[0].text;
+    } catch (error) {
+        console.error("Error calling Bedrock:", error);
+        
+        // If we're in development mode, provide a mock response as fallback
+        if (ENV.NODE_ENV === 'development') {
+            console.log("Falling back to mock response after error");
+            return mockBedrockResponse(userData);
+        }
+        
+        throw error;
+    }
+}
+
+/**
+ * Generate a mock response for development/testing
+ * @param {Object} userData - User input data
+ * @returns {string} Mock response
+ */
+function mockBedrockResponse(userData) {
+    // Create more personalized mock responses based on user inputs
+    let jobTitle;
+    
+    switch(userData.cloudService) {
+        case 'Serverless':
+            jobTitle = 'Function Fusion Maharaja';
+            break;
+        case 'AI/ML':
+            jobTitle = 'Neural Nawaab';
+            break;
+        case 'Security':
+            jobTitle = 'Digital Darwaan 3000';
+            break;
+        case 'Databases':
+            jobTitle = 'Query Qutub Minar';
+            break;
+        case 'IoT':
+            jobTitle = 'Sensor Samrat';
+            break;
+        default:
+            jobTitle = 'Cloud Computing Rockstar';
+    }
+    
+    const description = `${userData.name} is the ${jobTitle} who combines ${userData.workStyle.toLowerCase()} with ${userData.superpower.toLowerCase()} to create tech magic. Their approach to cloud computing is as unique as finding a quiet corner in a Delhi market!`;
+    
+    return `Job Title: ${jobTitle}\nDescription: ${description}`;
 }
 
 /**
  * Parse the response from Bedrock API
  * @param {string} response - Raw response from Bedrock
+ * @param {string} userName - User's name for the result
  * @returns {Object} Parsed job title and description
  */
-function parseBedrockResponse(response) {
+function parseBedrockResponse(response, userName) {
     const lines = response.split('\n');
     let jobTitle = '';
     let description = '';
@@ -98,152 +168,25 @@ function parseBedrockResponse(response) {
     
     return {
         title: jobTitle || 'Cloud Computing Specialist',
-        description: description || 'A dedicated cloud professional with amazing skills!',
-        userName: 'Generated by AI'
+        description: description || `${userName} is a dedicated cloud professional with amazing skills!`,
+        userName: userName
     };
 }
-
-/**
- * Enhanced form submission with AWS integration
- * Replace the existing form handler in script.js with this
- */
-async function handleFormSubmissionWithAWS(formData) {
-    const userData = {
-        name: formData.get('userName'),
-        cloudService: formData.get('cloudService'),
-        workStyle: formData.get('workStyle'),
-        superpower: formData.get('superpower')
-    };
-    
-    showLoading();
-    
-    try {
-        // Try AWS Bedrock first
-        const result = await generateJobTitleWithBedrock(userData);
-        showResult(result);
-    } catch (error) {
-        console.error('AWS integration failed, using local generation:', error);
-        // Fallback to local generation
-        setTimeout(() => {
-            const result = generateJobTitle(userData);
-            showResult(result);
-        }, 1000);
-    }
-}
-
-/**
- * AWS Lambda function for serverless deployment
- * This can be deployed as a Lambda function to handle the job title generation
- */
-const lambdaHandler = async (event) => {
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Content-Type': 'application/json'
-    };
-    
-    // Handle CORS preflight
-    if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
-    }
-    
-    try {
-        const userData = JSON.parse(event.body);
-        const result = await generateJobTitleWithBedrock(userData);
-        
-        return {
-            statusCode: 200,
-            headers,
-            body: JSON.stringify(result)
-        };
-    } catch (error) {
-        console.error('Lambda error:', error);
-        return {
-            statusCode: 500,
-            headers,
-            body: JSON.stringify({ error: 'Internal server error' })
-        };
-    }
-};
-
-/**
- * CloudFormation template for AWS deployment
- * Save this as cloudformation-template.yaml
- */
-const cloudFormationTemplate = `
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
-Description: Desi Cloud Job Title Generator
-
-Resources:
-  JobTitleGeneratorFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: src/
-      Handler: lambda.handler
-      Runtime: nodejs18.x
-      Timeout: 30
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /generate
-            Method: post
-      Environment:
-        Variables:
-          BEDROCK_REGION: !Ref AWS::Region
-      Policies:
-        - Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - bedrock:InvokeModel
-              Resource: '*'
-
-  JobTitleGeneratorBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub 'desi-cloud-jobs-\${AWS::AccountId}'
-      WebsiteConfiguration:
-        IndexDocument: index.html
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: false
-        IgnorePublicAcls: false
-        RestrictPublicBuckets: false
-
-  BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref JobTitleGeneratorBucket
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal: '*'
-            Action: s3:GetObject
-            Resource: !Sub '\${JobTitleGeneratorBucket}/*'
-
-Outputs:
-  ApiUrl:
-    Description: API Gateway endpoint URL
-    Value: !Sub 'https://\${ServerlessRestApi}.execute-api.\${AWS::Region}.amazonaws.com/Prod/generate'
-  
-  WebsiteUrl:
-    Description: S3 website URL
-    Value: !GetAtt JobTitleGeneratorBucket.WebsiteURL
-`;
 
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         generateJobTitleWithBedrock,
-        handleFormSubmissionWithAWS,
-        lambdaHandler,
-        cloudFormationTemplate
+        callBedrockAPI,
+        parseBedrockResponse
+    };
+}
+
+// Export functions for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        generateJobTitleWithBedrock,
+        callBedrockAPI,
+        parseBedrockResponse
     };
 }
